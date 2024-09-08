@@ -2,13 +2,11 @@
 using Microsoft.Extensions.Options;
 using TeamsStatusPub.Core.Models;
 using TeamsStatusPub.Core.Services;
-using TeamsStatusPub.Core.Services.HttpServers;
 
 namespace TeamsStatusPub.Core.Configuration;
 
 /// <summary>
-/// Extension methods for <see cref="IServiceCollection"/> that adds the application
-/// services.
+/// Extension methods for <see cref="IServiceCollection"/> that adds the application services.
 /// </summary>
 public static partial class ServiceConfiguration
 {
@@ -19,9 +17,6 @@ public static partial class ServiceConfiguration
     public static void ConfigureAppServices(this IServiceCollection services)
     {
         services.AddAppLogging();
-
-        services.AddSingleton<IHttpFactory, HttpFactory>(sp => new HttpFactory(sp));
-        services.AddTransient<IHttpProvider, HttpProvider>();
 
         services.AddSingleton<IAppInfo, AssemblyAppInfo>();
 

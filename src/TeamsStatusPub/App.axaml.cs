@@ -51,8 +51,6 @@ public class App : Application
 
     private static async void StartWebServer()
     {
-        var httpHost = ServiceProvider.GetRequiredService<IHttpProvider>();
         var availabilityHandler = ServiceProvider.GetRequiredService<IAvailabilityHandler>();
-        await httpHost.Listen(availabilityHandler.IsAvailable);
     }
 }

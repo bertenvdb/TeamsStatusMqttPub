@@ -14,7 +14,6 @@ public class AboutViewModel : ViewModelBase
     public string Copyright => _appInfo.Copyright;
     public string WebsiteUrl => _appInfo.WebsiteUrl;
     public string Version => _appInfo.Version;
-    public string ListenUrl => $"http://{_runtimeSettings.ListenAddress}:{_runtimeSettings.ListenPort}/";
 
     public string LastAvailabilitySystemStatus
     {
