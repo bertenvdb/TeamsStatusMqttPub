@@ -13,7 +13,7 @@ public static partial class ServiceConfiguration
     /// <returns>The <see cref="IServiceCollection"/>.</returns>
     private static IServiceCollection ConfigureMicrosoftTeamsClassicServices(this IServiceCollection services)
     {
-        services.AddSingleton<IMicrosoftTeamsClassicFactory, MicrosoftTeamsClassicFactory>(sp => new MicrosoftTeamsClassicFactory(sp));
+        services.AddSingleton<IMicrosoftTeamsClassicFactory, MicrosoftTeamsClassicFactory>(sp => new (sp));
         services.AddTransient<IAvailabilityHandler, MicrosoftTeamsClassicHandler>();
 
         return services;

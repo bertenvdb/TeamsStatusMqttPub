@@ -10,7 +10,10 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="MQTTnet" />
     <PackageReference Include="NetCoreServer" />
+    <PackageReference Include="Quartz" />
+    <PackageReference Include="Quartz.DependencyInjection.Microsoft" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Extensions.Hosting" />
     <PackageReference Include="Serilog.Settings.Configuration" />

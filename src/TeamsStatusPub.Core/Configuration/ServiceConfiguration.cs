@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using MQTTnet.Channel;
 using TeamsStatusPub.Core.Models;
 using TeamsStatusPub.Core.Services;
+using TeamsStatusPub.Core.Services.MqttPublisher;
+using TeamsStatusPub.Core.Services.StatusPoller;
 
 namespace TeamsStatusPub.Core.Configuration;
 
@@ -18,11 +21,16 @@ public static partial class ServiceConfiguration
     {
         services.AddAppLogging();
 
+        services.AddSingleton<IStatusPoller, StatusPoller>();
+        services.AddSingleton<IMqttPublisher, MqttPublisher>();
+
         services.AddSingleton<IAppInfo, AssemblyAppInfo>();
 
         var configuration = AppConfiguration.Build();
 
         services.Configure<RuntimeSettings>(configuration.GetSection("Runtime"));
+        services.Configure<StatusPollerSettings>(configuration.GetSection(StatusPollerSettings.SectionName));
+        services.Configure<MqttSettings>(configuration.GetSection(MqttSettings.SectionName));
 
         using var sp = services.BuildServiceProvider();
         var runtimeSettings = sp.GetRequiredService<IOptions<RuntimeSettings>>();

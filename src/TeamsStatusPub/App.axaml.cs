@@ -8,8 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using TeamsStatusPub.ViewModels;
 using TeamsStatusPub.Core.Configuration;
-using TeamsStatusPub.Core.Services;
 using TeamsStatusPub.Core.Services.AvailabilityHandlers;
+using TeamsStatusPub.Core.Services.StatusPoller;
 
 namespace TeamsStatusPub;
 
@@ -38,7 +38,7 @@ public class App : Application
         {
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             DataContext = ServiceProvider.GetRequiredService<AppViewModel>();
-            var listener = RxApp.MainThreadScheduler.Schedule(StartWebServer);
+            var listener = RxApp.MainThreadScheduler.Schedule(StartStatusPoller);
 
             desktop.Exit += (_, _) =>
             {
@@ -49,8 +49,10 @@ public class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private static async void StartWebServer()
+    private static async void StartStatusPoller()
     {
         var availabilityHandler = ServiceProvider.GetRequiredService<IAvailabilityHandler>();
+        var statusPoller = ServiceProvider.GetRequiredService<IStatusPoller>();
+        await statusPoller.Start(availabilityHandler.IsAvailable);
     }
 }
