@@ -9,7 +9,7 @@
         SizeToContent="WidthAndHeight"
         CanResize="False"
         Icon="/Assets/logo.ico"
-        Title="About TeamsStatusMqttPub">
+        Title="About Teams Status Mqtt Pub">
   <Window.Styles>
     <Style Selector="HyperlinkButton">
       <Setter Property="Padding" Value="0" />
@@ -20,7 +20,7 @@
         ColumnDefinitions="Auto,*"
         RowDefinitions="Auto,*"
         Margin="15">
-    <Image Grid.Row="0" Grid.Column="0" Source="/Assets/logo.png" Width="104" Height="85" />
+    <Image Grid.Row="0" Grid.Column="0" Source="/Assets/logo.webp" Width="104" Height="85" />
     <StackPanel Grid.Row="0" Grid.Column="1" Margin="10, 10">
       <TextBlock Text="{Binding ApplicationName}" FontWeight="Bold" FontSize="18" Margin="0,0,0,10" />
       <TextBlock Text="{Binding Version}" />
