@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using TeamsStatusMqttPub.Core.Models;
 using MQTTnet;
 using MQTTnet.Client;
+using TeamsStatusMqttPub.Core.Models;
 
 namespace TeamsStatusMqttPub.Core.Services.MqttPublisher;
 
@@ -14,31 +14,34 @@ public class MqttPublisher(ILogger<MqttPublisher> logger, IOptions<MqttSettings>
     {
         var mqttFactory = new MqttFactory();
 
-        using var mqttClient = mqttFactory.CreateMqttClient();
-        var mqttClientOptions = new MqttClientOptionsBuilder()
+        using IMqttClient? mqttClient = mqttFactory.CreateMqttClient();
+        MqttClientOptions? mqttClientOptions = new MqttClientOptionsBuilder()
             .WithTcpServer(_settings.Host)
+            .WithClientId(_settings.ClientId)
             .WithCredentials(_settings.Username, _settings.Password)
             .Build();
 
         try
         {
             await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+
+            MqttApplicationMessage? applicationMessage = new MqttApplicationMessageBuilder()
+                .WithTopic(_settings.Topic)
+                .WithPayload(message)
+                .Build();
+
+            await mqttClient.PublishAsync(applicationMessage, CancellationToken.None);
+
+            logger.LogInformation("Published status: {message}", message);
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Failed to connect to MQTT broker");
+            logger.LogError(e, "Failed to publish to MQTT broker");
             throw;
         }
-
-        var applicationMessage = new MqttApplicationMessageBuilder()
-            .WithTopic(_settings.Topic)
-            .WithPayload(message)
-            .Build();
-
-        await mqttClient.PublishAsync(applicationMessage, CancellationToken.None);
-
-        logger.LogInformation("Published status: {message}", message);
-
-        await mqttClient.DisconnectAsync();
+        finally
+        {
+            await mqttClient.DisconnectAsync();
+        }
     }
 }

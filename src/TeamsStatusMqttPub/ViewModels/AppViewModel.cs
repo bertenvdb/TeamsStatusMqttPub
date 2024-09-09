@@ -8,9 +8,6 @@ namespace TeamsStatusMqttPub.ViewModels;
 
 public class AppViewModel : ViewModelBase
 {
-    public ReactiveCommand<Unit, Unit> AboutCommand { get; }
-    public ReactiveCommand<Unit, Unit> ExitCommand { get; }
-
     public AppViewModel()
     {
         AboutCommand = ReactiveCommand.Create(() =>
@@ -22,9 +19,10 @@ public class AppViewModel : ViewModelBase
         ExitCommand = ReactiveCommand.Create(() =>
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
-            {
                 lifetime.Shutdown();
-            }
         });
     }
+
+    public ReactiveCommand<Unit, Unit> AboutCommand { get; }
+    public ReactiveCommand<Unit, Unit> ExitCommand { get; }
 }

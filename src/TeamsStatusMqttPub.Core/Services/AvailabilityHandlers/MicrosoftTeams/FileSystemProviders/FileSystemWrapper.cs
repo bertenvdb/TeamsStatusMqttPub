@@ -1,19 +1,19 @@
 ﻿namespace TeamsStatusMqttPub.Core.Services.AvailabilityHandlers.MicrosoftTeams.FileSystemProviders;
 
 /// <summary>
-/// Wrapper around physical file system.
+///     Wrapper around physical file system.
 /// </summary>
 public class FileSystemWrapper : IFileSystemProvider
 {
-    public IDirectoryProvider Directory { get; }
-
     /// <summary>
-    /// Initializes a new instance of the FileSystemWrapper class.
+    ///     Initializes a new instance of the FileSystemWrapper class.
     /// </summary>
     public FileSystemWrapper()
     {
         Directory = new DirectoryWrapper();
     }
+
+    public IDirectoryProvider Directory { get; }
 
     public IReadOnlyCollection<string> ReadAllLines(string path)
     {
@@ -25,11 +25,8 @@ public class FileSystemWrapper : IFileSystemProvider
 
         while (!reader.EndOfStream)
         {
-            var line = reader.ReadLine();
-            if (line is not null)
-            {
-                lines.Add(line);
-            }
+            string? line = reader.ReadLine();
+            if (line is not null) lines.Add(line);
         }
 
         return lines;

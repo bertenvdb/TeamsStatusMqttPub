@@ -1,3 +1,4 @@
+using System;
 using System.Reactive.Concurrency;
 using Avalonia;
 using Avalonia.Controls;
@@ -6,10 +7,10 @@ using Avalonia.Logging;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
-using TeamsStatusMqttPub.ViewModels;
 using TeamsStatusMqttPub.Core.Configuration;
 using TeamsStatusMqttPub.Core.Services.AvailabilityHandlers;
 using TeamsStatusMqttPub.Core.Services.StatusPoller;
+using TeamsStatusMqttPub.ViewModels;
 
 namespace TeamsStatusMqttPub;
 
@@ -38,7 +39,7 @@ public class App : Application
         {
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             DataContext = ServiceProvider.GetRequiredService<AppViewModel>();
-            var listener = RxApp.MainThreadScheduler.Schedule(StartStatusPoller);
+            IDisposable listener = RxApp.MainThreadScheduler.Schedule(StartStatusPoller);
 
             desktop.Exit += (_, _) =>
             {

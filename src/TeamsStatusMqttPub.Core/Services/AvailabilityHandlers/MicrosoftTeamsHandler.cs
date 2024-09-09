@@ -6,37 +6,35 @@ using TeamsStatusMqttPub.Core.Services.AvailabilityHandlers.MicrosoftTeams.FileS
 namespace TeamsStatusMqttPub.Core.Services.AvailabilityHandlers;
 
 /// <summary>
-/// Availability of user in the Microsoft Teams desktop application.
+///     Availability of user in the Microsoft Teams desktop application.
 /// </summary>
 public partial class MicrosoftTeamsHandler : IAvailabilityHandler
 {
+    private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly ILogDiscovery _logDiscovery;
+
+    private readonly ILogger<MicrosoftTeamsHandler> _logger;
+
     /// <summary>
-    /// The availability from the last successful log parse. In case there's
-    /// no successful parsing yet, use a default value of "available."
+    ///     All statuses that should be considered as "not available." Case
+    ///     doesn't matter.
+    /// </summary>
+    private readonly string[] _statusesConsideredNotAvailable = ["Busy", "DoNotDisturb"];
+
+    /// <summary>
+    ///     The availability from the last successful log parse. In case there's
+    ///     no successful parsing yet, use a default value of "available."
     /// </summary>
     private bool _lastAvailability;
 
     /// <summary>
-    /// The absolute path to the Teams log directory. This is cached once
-    /// found as it won't change throughout this application's lifetime.
+    ///     The absolute path to the Teams log directory. This is cached once
+    ///     found as it won't change throughout this application's lifetime.
     /// </summary>
     private string? _logDirectory;
 
     /// <summary>
-    /// All statuses that should be considered as "not available." Case
-    /// doesn't matter.
-    /// </summary>
-    private readonly string[] _statusesConsideredNotAvailable = ["Busy", "DoNotDisturb"];
-
-    private readonly ILogger<MicrosoftTeamsHandler> _logger;
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly ILogDiscovery _logDiscovery;
-
-    [GeneratedRegex("availability: ([a-zA-Z]+),")]
-    private static partial Regex AvailabilityRegex();
-
-    /// <summary>
-    /// Initializes a new instance of the MicrosoftTeamsHandler class.
+    ///     Initializes a new instance of the MicrosoftTeamsHandler class.
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="fileSystemProvider"></param>
@@ -58,21 +56,15 @@ public partial class MicrosoftTeamsHandler : IAvailabilityHandler
 
     public bool IsAvailable()
     {
-        var statusChangeLine = MostRecentSignificantLogLine();
+        string? statusChangeLine = MostRecentSignificantLogLine();
 
-        if (statusChangeLine is null)
-        {
-            return _lastAvailability;
-        }
+        if (statusChangeLine is null) return _lastAvailability;
 
-        var statuses = AvailabilityRegex().Match(statusChangeLine);
+        Match statuses = AvailabilityRegex().Match(statusChangeLine);
 
-        if (!statuses.Success)
-        {
-            return _lastAvailability;
-        }
+        if (!statuses.Success) return _lastAvailability;
 
-        var lineIndicatesBusy = statuses.Groups.Values
+        bool lineIndicatesBusy = statuses.Groups.Values
 
             // First element contains entire regex pattern. Ignore it.
             .Skip(1)
@@ -97,6 +89,9 @@ public partial class MicrosoftTeamsHandler : IAvailabilityHandler
         return _lastAvailability;
     }
 
+    [GeneratedRegex("availability: ([a-zA-Z]+),")]
+    private static partial Regex AvailabilityRegex();
+
     private string? MostRecentSignificantLogLine()
     {
         // It's possible that this program is launched before Teams is first
@@ -114,7 +109,7 @@ public partial class MicrosoftTeamsHandler : IAvailabilityHandler
         // Have to discover what the latest log file is every time a query is
         // needed as it's likely to change during runtime -- new file every
         // day and even multiple files throughout the day.
-        var logFile = _logDiscovery.FindLogPath(_logDirectory);
+        string? logFile = _logDiscovery.FindLogPath(_logDirectory);
 
         if (string.IsNullOrEmpty(logFile))
         {

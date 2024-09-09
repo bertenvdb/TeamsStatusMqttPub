@@ -3,13 +3,11 @@
 namespace TeamsStatusMqttPub.Core.Models;
 
 /// <summary>
-/// The different systems that this application can parse availability from.
+///     The different systems that this application can parse availability from.
 /// </summary>
 public enum AvailabilitySystems
 {
-    [Description("Teams Classic")]
-    MicrosoftTeamsClassic,
+    [Description("Teams Classic")] MicrosoftTeamsClassic,
 
-    [Description("Teams")]
-    MicrosoftTeams
+    [Description("Teams")] MicrosoftTeams
 }

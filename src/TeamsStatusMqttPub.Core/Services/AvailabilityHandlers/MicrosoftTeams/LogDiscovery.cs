@@ -4,15 +4,15 @@ using TeamsStatusMqttPub.Core.Services.AvailabilityHandlers.MicrosoftTeams.FileS
 namespace TeamsStatusMqttPub.Core.Services.AvailabilityHandlers.MicrosoftTeams;
 
 /// <summary>
-/// Service to find the associated log file for Teams.
+///     Service to find the associated log file for Teams.
 /// </summary>
 public class LogDiscovery : ILogDiscovery
 {
-    private readonly ILogger<LogDiscovery> _logger;
     private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly ILogger<LogDiscovery> _logger;
 
     /// <summary>
-    /// Initializes a new instance of the LogDiscovery class.
+    ///     Initializes a new instance of the LogDiscovery class.
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="fileSystemProvider"></param>
@@ -24,7 +24,8 @@ public class LogDiscovery : ILogDiscovery
 
     public string? FindLogDirectory()
     {
-        var packages = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Packages");
+        string packages = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "Packages");
 
         if (!_fileSystemProvider.Directory.Exists(packages))
         {
@@ -33,15 +34,16 @@ public class LogDiscovery : ILogDiscovery
         }
 
         // Will look something like this: MSTeams_3wflxb5d6aawd
-        var msTeamsDirs = _fileSystemProvider.Directory.GetDirectories(packages, "MSTeams_*");
+        string[] msTeamsDirs = _fileSystemProvider.Directory.GetDirectories(packages, "MSTeams_*");
 
         if (msTeamsDirs.Length != 1)
         {
-            _logger.LogError("Expected to find only one MSTeams directory but didn't: {@MsTeamsDirectories}", msTeamsDirs);
+            _logger.LogError("Expected to find only one MSTeams directory but didn't: {@MsTeamsDirectories}",
+                msTeamsDirs);
             return null;
         }
 
-        var logsPath = Path.Combine(msTeamsDirs[0], "LocalCache", "Microsoft", "MSTeams", "Logs");
+        string logsPath = Path.Combine(msTeamsDirs[0], "LocalCache", "Microsoft", "MSTeams", "Logs");
 
         if (!_fileSystemProvider.Directory.Exists(logsPath))
         {
@@ -55,12 +57,9 @@ public class LogDiscovery : ILogDiscovery
     public string? FindLogPath(string directory)
     {
         // Follows this pattern: MSTeams_2024-03-19_02-21-57.02.log
-        var latestLogFile = _fileSystemProvider.Directory.GetFiles(directory, "MSTeams_*.log").MaxBy(x => x);
+        string? latestLogFile = _fileSystemProvider.Directory.GetFiles(directory, "MSTeams_*.log").MaxBy(x => x);
 
-        if (string.IsNullOrEmpty(latestLogFile))
-        {
-            _logger.LogError("No log files found");
-        }
+        if (string.IsNullOrEmpty(latestLogFile)) _logger.LogError("No log files found");
 
         return latestLogFile;
     }

@@ -42,10 +42,12 @@ internal sealed class Program
         }
     }
 
-    private static AppBuilder BuildAvaloniaApp() =>
-        AppBuilder.Configure<App>()
+    private static AppBuilder BuildAvaloniaApp()
+    {
+        return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
             .UseReactiveUI();
+    }
 }

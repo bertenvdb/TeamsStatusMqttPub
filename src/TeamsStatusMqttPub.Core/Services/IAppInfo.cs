@@ -1,27 +1,27 @@
 ﻿namespace TeamsStatusMqttPub.Core.Services;
 
 /// <summary>
-/// Application info.
+///     Application info.
 /// </summary>
 public interface IAppInfo
 {
     /// <summary>
-    /// Gets the name of the application.
+    ///     Gets the name of the application.
     /// </summary>
     string ApplicationName { get; }
 
     /// <summary>
-    /// Gets the copyright notice.
+    ///     Gets the copyright notice.
     /// </summary>
     string Copyright { get; }
 
     /// <summary>
-    /// Gets the version string.
+    ///     Gets the version string.
     /// </summary>
     string Version { get; }
 
     /// <summary>
-    /// Gets the application web site.
+    ///     Gets the application web site.
     /// </summary>
     string WebsiteUrl { get; }
 }

@@ -1,16 +1,17 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Settings.Configuration;
 
 namespace TeamsStatusMqttPub.Core.Configuration;
 
 /// <summary>
-/// Extension methods that add logging.
+///     Extension methods that add logging.
 /// </summary>
 public static class LoggingConfiguration
 {
     /// <summary>
-    /// Creates the default logger.
+    ///     Creates the default logger.
     /// </summary>
     public static ILogger CreateDefaultLogger()
     {
@@ -19,16 +20,19 @@ public static class LoggingConfiguration
         var readerOptions = new ConfigurationReaderOptions(typeof(FileLoggerConfigurationExtensions).Assembly);
 
         // Allow Serilog config to be modified by appsettings file at runtime.
-        var configuration = AppConfiguration.Build();
+        IConfiguration configuration = AppConfiguration.Build();
 
         Log.Logger = new LoggerConfiguration()
-            .WriteTo.File($"{nameof(TeamsStatusMqttPub).ToLower()}.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7)
+            .WriteTo.File($"{nameof(TeamsStatusMqttPub).ToLower()}.log", rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 7)
             .ReadFrom.Configuration(configuration, readerOptions)
             .CreateLogger();
 
         return Log.Logger;
     }
 
-    public static void AddAppLogging(this IServiceCollection services) =>
+    public static void AddAppLogging(this IServiceCollection services)
+    {
         services.AddLogging(logBuilder => logBuilder.AddSerilog(dispose: true));
+    }
 }

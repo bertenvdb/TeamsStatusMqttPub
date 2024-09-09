@@ -4,27 +4,28 @@ using TeamsStatusMqttPub.Core.Services.AvailabilityHandlers.MicrosoftTeamsClassi
 namespace TeamsStatusMqttPub.Core.Services.AvailabilityHandlers;
 
 /// <summary>
-/// Availability of user in the Microsoft Teams Classic desktop application.
-/// This doesn't handle the mobile or web versions.
+///     Availability of user in the Microsoft Teams Classic desktop application.
+///     This doesn't handle the mobile or web versions.
 /// </summary>
 public class MicrosoftTeamsClassicHandler : IAvailabilityHandler
 {
-    /// <summary>
-    /// The result of the last log file processing.
-    /// </summary>
-    private bool _lastAvailability = true;
-
-    /// <summary>
-    /// The absolute path to the Teams log file.
-    /// </summary>
-    private readonly string _teamsLogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "Microsoft", "Teams", "logs.txt");
-
     private readonly ILogger<MicrosoftTeamsClassicHandler> _logger;
     private readonly IMicrosoftTeamsClassicFactory _microsoftTeamsClassicFactory;
 
     /// <summary>
-    /// Initializes a new instance of the MicrosoftTeamsHandler class.
+    ///     The absolute path to the Teams log file.
+    /// </summary>
+    private readonly string _teamsLogFilePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "Microsoft", "Teams", "logs.txt");
+
+    /// <summary>
+    ///     The result of the last log file processing.
+    /// </summary>
+    private bool _lastAvailability = true;
+
+    /// <summary>
+    ///     Initializes a new instance of the MicrosoftTeamsHandler class.
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="microsoftTeamsClassicFactory"></param>
@@ -32,7 +33,8 @@ public class MicrosoftTeamsClassicHandler : IAvailabilityHandler
         IMicrosoftTeamsClassicFactory microsoftTeamsClassicFactory)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _microsoftTeamsClassicFactory = microsoftTeamsClassicFactory ?? throw new ArgumentNullException(nameof(microsoftTeamsClassicFactory));
+        _microsoftTeamsClassicFactory = microsoftTeamsClassicFactory ??
+                                        throw new ArgumentNullException(nameof(microsoftTeamsClassicFactory));
     }
 
     public bool IsAvailable()
@@ -43,35 +45,27 @@ public class MicrosoftTeamsClassicHandler : IAvailabilityHandler
             throw new FileNotFoundException("Couldn't find Teams log file", _teamsLogFilePath);
         }
 
-        var lastAvailabilityFromFile = FindLastAvailabilityFromLogFile(_teamsLogFilePath);
+        bool? lastAvailabilityFromFile = FindLastAvailabilityFromLogFile(_teamsLogFilePath);
 
-        if (lastAvailabilityFromFile.HasValue)
-        {
-            _lastAvailability = lastAvailabilityFromFile.Value;
-        }
+        if (lastAvailabilityFromFile.HasValue) _lastAvailability = lastAvailabilityFromFile.Value;
 
         return _lastAvailability;
     }
 
     private bool? FindLastAvailabilityFromLogFile(string logFilePath)
     {
-        var logFileReader = _microsoftTeamsClassicFactory.CreateLogFileReader();
-        var linesOfInterest = logFileReader.ReadLinesOfInterest(logFilePath);
+        ILogFileReader logFileReader = _microsoftTeamsClassicFactory.CreateLogFileReader();
+        List<string> linesOfInterest = logFileReader.ReadLinesOfInterest(logFilePath);
         return LastAvailabilityFromLinesOfInterest(linesOfInterest);
     }
 
     internal static bool? LastAvailabilityFromLinesOfInterest(List<string> linesOfInterest)
     {
-        if (linesOfInterest.Count == 0)
-        {
-            return null;
-        }
+        if (linesOfInterest.Count == 0) return null;
 
         if (linesOfInterest[0].Contains(EventDataTokens.CallStarted) ||
             linesOfInterest[0].Contains(EventDataTokens.ScreenShareStarted))
-        {
             return false;
-        }
 
         return true;
     }

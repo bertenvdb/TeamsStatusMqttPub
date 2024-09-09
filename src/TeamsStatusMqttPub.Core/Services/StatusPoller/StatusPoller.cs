@@ -5,24 +5,19 @@ using TeamsStatusMqttPub.Core.Services.MqttPublisher;
 
 namespace TeamsStatusMqttPub.Core.Services.StatusPoller;
 
-public class StatusPoller : IStatusPoller
+public class StatusPoller(
+    ILogger<StatusPoller> logger,
+    IOptions<StatusPollerSettings> settings,
+    IMqttPublisher mqttPublisher)
+    : IStatusPoller
 {
-    private readonly ILogger<StatusPoller> _logger;
-    private readonly StatusPollerSettings _settings;
-    private readonly IMqttPublisher _mqttPublisher;
+    private readonly ILogger<StatusPoller> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IMqttPublisher _mqttPublisher = mqttPublisher ?? throw new ArgumentNullException(nameof(mqttPublisher));
+    private readonly StatusPollerSettings _settings = settings.Value ?? throw new ArgumentNullException(nameof(settings));
     private string? _status;
 
-    private Timer _timer;
-
-    public StatusPoller(
-        ILogger<StatusPoller> logger,
-        IOptions<StatusPollerSettings> settings,
-        IMqttPublisher mqttPublisher)
-    {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _settings = settings.Value ?? throw new ArgumentNullException(nameof(settings));
-        _mqttPublisher = mqttPublisher ?? throw new ArgumentNullException(nameof(mqttPublisher));
-    }
+    // ReSharper disable once NotAccessedField.Local
+    private Timer? _timer;
 
     public Task Start(Func<bool>? availabilityHandler)
     {
@@ -38,7 +33,7 @@ public class StatusPoller : IStatusPoller
 
     private void PublishStatusIfChanged(Func<bool> availabilityHandler)
     {
-        var newStatus = availabilityHandler.Invoke().ToString();
+        string newStatus = availabilityHandler.Invoke().ToString();
         _logger.LogDebug("Found status: {newStatus}", newStatus);
 
         if (_status != newStatus)

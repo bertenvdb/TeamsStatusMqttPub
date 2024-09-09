@@ -8,10 +8,10 @@ namespace TeamsStatusMqttPub.Core.Configuration;
 public static partial class ServiceConfiguration
 {
     /// <summary>
-    /// Adds the services required for Microsoft Teams into the service collection.
+    ///     Adds the services required for Microsoft Teams into the service collection.
     /// </summary>
-    /// <param name="services">The <see cref="IServiceCollection"/> instance.</param>
-    /// <returns>The <see cref="IServiceCollection"/>.</returns>
+    /// <param name="services">The <see cref="IServiceCollection" /> instance.</param>
+    /// <returns>The <see cref="IServiceCollection" />.</returns>
     private static IServiceCollection ConfigureMicrosoftTeamsServices(this IServiceCollection services)
     {
         services.AddTransient<IAvailabilityHandler, MicrosoftTeamsHandler>();

@@ -1,7 +1,7 @@
 ﻿namespace TeamsStatusMqttPub.Core.Services.AvailabilityHandlers.MicrosoftTeams.FileSystemProviders;
 
 /// <summary>
-/// Wrapper for directory-based methods.
+///     Wrapper for directory-based methods.
 /// </summary>
 public interface IDirectoryProvider
 {
