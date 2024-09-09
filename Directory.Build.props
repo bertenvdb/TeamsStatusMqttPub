@@ -1,14 +1,14 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>1.6.1</VersionPrefix>
-    <Copyright>Copyright (c) 2022-2024 Andrei Nicholson</Copyright>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)TeamsStatusPub.snk</AssemblyOriginatorKeyFile>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <Copyright>Copyright (c) 2024 Berten Vandebroek</Copyright>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)TeamsStatusMqttPub.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>True</SignAssembly>
     <PackageId>$(AssemblyName)</PackageId>
     <Features>strict</Features>
-    <Authors>Andrei Nicholson</Authors>
-    <Product>Teams Status Pub</Product>
-    <Company>https://www.github.com/tetsuo13/TeamsStatusPub</Company>
+    <Authors>Berten Vandebroek</Authors>
+    <Product>Teams Status MQTT Pub</Product>
+    <Company>https://www.github.com/bertenvdb/TeamsStatusMqttPub</Company>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
